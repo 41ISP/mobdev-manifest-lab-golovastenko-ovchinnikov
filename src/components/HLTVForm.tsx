@@ -1,10 +1,31 @@
+import { useState } from "react"
+import type { TTeamInput } from "../types"
+import { useTeamsStore } from "../store/useTeamsStore"
+
+const initialForm: TTeamInput = {
+        Name: '',
+        VRS: 150,
+        WonAMajor: false,
+        Players: ""
+}
+
 export function HLTVForm() {
+    const [form, setForm] = useState<TTeamInput>(initialForm)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const onChange = <K extends keyof TTeamInput>(key: K, value: TTeamInput[K]) => {
+        setForm((o) => ({ ...o, [key]: value}))
+    }
+    const {getTeams} = useTeamsStore()
+    const onSubmit = () => {
+        const newForm = {...form, Players: form.Players.split(',')}
+    }
+
     return (
         <form className="form">
-            <h2>Добавить сущность</h2>
+            <h2>Добавить команду</h2>
 
             <label className="field">
-                Строка
+                Название
                 <input type="text" required />
             </label>
 

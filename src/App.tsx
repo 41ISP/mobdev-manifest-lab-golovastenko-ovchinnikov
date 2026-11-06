@@ -23,6 +23,18 @@ export default function App() {
             }
         }
         load()
+
+        // const intervalId = setInterval(() => {
+        //     try {
+        //         getTeams()
+        //     } catch (error) {
+        //         console.error(error)
+        //     }
+        // }, 5000)
+
+        // return () => {
+        //     clearInterval(intervalId)
+        // }
     }, [])
 
     useEffect(() => {
@@ -32,8 +44,8 @@ export default function App() {
     return (
         <div className="layout">
             <header className="top">
-                <h1>Мои сущности</h1>
-                <span className="pill">Количество: {teams?.data.length}</span>
+                <h1>HLTV</h1>
+                <span className="pill">Количество команд: {teams?.data.length}</span>
             </header>
 
             <aside>
@@ -49,7 +61,7 @@ export default function App() {
                         <HLTVCard key={el.id} {...el} />
                     ))}
                 </div>
-                ) : (<p className="hint">Добавьте сущность</p>)}
+                ) : (<p className="hint">Добавьте команду</p>)}
             </main>
         </div>
     )

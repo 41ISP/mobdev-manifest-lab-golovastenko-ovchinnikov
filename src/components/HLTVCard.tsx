@@ -1,9 +1,16 @@
-import { API_URL } from "../api";
+import { api, API_URL } from "../api";
+import { useTeamsStore } from "../store/useTeamsStore";
 import type { ITeam } from "../types";
 
 interface IHLTVCard extends ITeam { }
 
-export function HLTVCard({ Name, VRS, Coach, AveragePlayerAge, PrizeMoneyAmount, WonAMajor, Logotype, Players }: IHLTVCard) {
+export function HLTVCard({ Name, VRS, Coach, AveragePlayerAge, PrizeMoneyAmount, WonAMajor, Logotype, Players, documentId }: IHLTVCard) {
+    const {getTeams} = useTeamsStore()
+    const handleDelete = async () => {
+        await api.deleteTeam(documentId)
+        getTeams()
+    }
+    
     return (
         <article className="card">
             <div className="card__cover">
@@ -30,7 +37,7 @@ export function HLTVCard({ Name, VRS, Coach, AveragePlayerAge, PrizeMoneyAmount,
 
             <footer className="card__footer">
                 <strong>{VRS} место в рейтинге VRS</strong>
-                <button className="link-btn">Удалить</button>
+                <button onClick={handleDelete} className="link-btn">Удалить</button>
             </footer>
         </article>
     )

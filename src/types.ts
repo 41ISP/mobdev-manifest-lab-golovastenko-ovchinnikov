@@ -19,10 +19,14 @@ export interface ITeam {
   Logotype?: ILogotype
 }
 
-export type ITeamInput = Omit<
+export type _TTeamInput = Omit<
     ITeam,
-    "id" | "documentId" | "createdAt" | "updatedAt" | "publishedAt" | "image"
+    "id" | "documentId" | "createdAt" | "updatedAt" | "publishedAt" | "image" | "Players"
 >
+export type TTeamInput = _TTeamInput & {
+  Players: string
+}
+
 
 export interface ILogotype {
   id: number
