@@ -1,5 +1,5 @@
 import axios from "axios"
-import type { ITeam, IStrapiResponse, TTeamInput } from "./types"
+import type { ITeam, IStrapiResponse, TTeamPayload } from "./types"
 
 export const API_URL = import.meta.env.VITE_API_URL
 const API_KEY = import.meta.env.VITE_API_KEY
@@ -21,8 +21,8 @@ const getTeams = async(): Promise<IStrapiResponse<ITeam[]>> => {
     return res.data
 }
 
-const createTeam = async(input: TTeamInput): Promise<ITeam> => {
-    const res = await apiInstance.post('/hltvs', { data: input })
+const createTeam = async(input: TTeamPayload): Promise<ITeam> => {
+    const res = await apiInstance.post<IStrapiResponse<ITeam>>('/hltvs', { data: input })
     return res.data.data
 }
 

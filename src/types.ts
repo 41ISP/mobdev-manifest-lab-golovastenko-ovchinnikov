@@ -21,10 +21,14 @@ export interface ITeam {
 
 export type _TTeamInput = Omit<
     ITeam,
-    "id" | "documentId" | "createdAt" | "updatedAt" | "publishedAt" | "image" | "Players"
+    "id" | "documentId" | "createdAt" | "updatedAt" | "publishedAt" | "Logotype" | "Players"
 >
 export type TTeamInput = _TTeamInput & {
   Players: string
+}
+
+export type TTeamPayload = Omit<TTeamInput, 'Players'> & {
+  Players: string[]
 }
 
 

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { useTeamsStore } from "./store/useTeamsStore"
 
 export default function App() {
-    const { teams, getTeams } = useTeamsStore()
+    const {teams, getTeams } = useTeamsStore()
     const [error, setIsError] = useState<string | null>(null)
     const [loading, setIsLoading] = useState<boolean>(false)
 

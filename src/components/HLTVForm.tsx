@@ -1,84 +1,89 @@
 import { useState } from "react"
-import type { TTeamInput } from "../types"
+import type { TTeamInput, TTeamPayload } from "../types"
 import { useTeamsStore } from "../store/useTeamsStore"
+import { api } from "../api"
 
 const initialForm: TTeamInput = {
-        Name: '',
-        VRS: 150,
-        WonAMajor: false,
-        Players: ""
+    Name: '',
+    VRS: 150,
+    WonAMajor: false,
+    Players: ""
 }
 
 export function HLTVForm() {
     const [form, setForm] = useState<TTeamInput>(initialForm)
     const [isLoading, setIsLoading] = useState<boolean>(false)
+
     const onChange = <K extends keyof TTeamInput>(key: K, value: TTeamInput[K]) => {
-        setForm((o) => ({ ...o, [key]: value}))
+        setForm((o) => ({ ...o, [key]: value }))
     }
-    const {getTeams} = useTeamsStore()
-    const onSubmit = () => {
-        const newForm = {...form, Players: form.Players.split(',')}
+
+    const { getTeams } = useTeamsStore()
+
+    const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        try {
+            setIsLoading(true)
+            const payload: TTeamPayload = {
+                ...form,
+                Players: form.Players.split(/[,\n\r;]+/).map(p => p.trim()).filter(Boolean)
+            }
+            await api.createTeam(payload)
+            setForm(initialForm)
+            await getTeams()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
-        <form className="form">
+        <form className="form" onSubmit={onSubmit}>
             <h2>Добавить команду</h2>
 
             <label className="field">
-                Название
-                <input type="text" required />
+                Название*
+                <input onChange={(e) => onChange('Name', e.target.value)} type="text" value={form.Name} required />
             </label>
 
             <label className="field">
-                Длинный текст
-                <textarea rows={3} />
+                Игроки
+                <textarea rows={5} value={form.Players} onChange={(e) => onChange('Players', e.target.value)}/>
             </label>
 
             <label className="field">
-                Целое число
-                <input type="number" min={0} step={1} />
+                Средний возраст игроков
+                <input type="number" min={0} step={0.1} value={form.AveragePlayerAge ?? ''}
+                    onChange={(e) => onChange('AveragePlayerAge', e.target.value ? Number(e.target.value) : undefined)}/>
             </label>
 
             <label className="field">
-                Число с плавающией точкой
-                <input type="number" min={0} step={0.01} />
+                Тренер
+                <input type="text" value={form.Coach ?? ''} onChange={(e) => onChange('Coach', e.target.value)}/>
             </label>
 
             <label className="field">
-                <span>Диапазон</span>
-                <input type="range" min={0} max={10} step={0.5} />
+                Призовые
+                <input type="number" min={0} step={1} value={form.PrizeMoneyAmount ?? ''}
+                    onChange={(e) => onChange('PrizeMoneyAmount', e.target.value ? Number(e.target.value) : undefined)} />
             </label>
 
             <label className="field">
-                Дата
-                <input type="date" required />
+                Место в VRS*
+                <input type="number" min={0} step={1} value={form.VRS} onChange={(e) => onChange('VRS', Number(e.target.value))}/>
             </label>
 
             <label className="field">
-                Выпадающий список
-                <select>
-                    <option>Вариант 1</option>
+                Выигрывали мажор?
+                <select value={form.WonAMajor ? "yes" : "no"}
+                onChange={(e) => onChange('WonAMajor', e.target.value === 'yes')}>
+                    <option value="no">Нет</option>
+                    <option value="yes">Да</option>
                 </select>
             </label>
-
-            <fieldset>
-                <legend>Группа чекбоксов</legend>
-                <label className="check">
-                    <input type="checkbox" />
-                    Чекбокс 1
-                </label>
-                <label className="check">
-                    <input type="checkbox" />
-                    Чекбокс 2
-                </label>
-            </fieldset>
-
-            <label className="check">
-                <input type="checkbox" />
-                Чекбокс
-            </label>
-
-            <button className="btn">Добавить</button>
+            
+            <button disabled={isLoading} className="btn">{isLoading ? "Сохраняем…" : "Добавить"}</button>
         </form>
     )
 }

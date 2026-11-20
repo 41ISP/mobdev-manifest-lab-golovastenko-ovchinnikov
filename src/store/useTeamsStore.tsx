@@ -5,8 +5,8 @@ import { api } from "../api";
 interface ITeamStore {
     teams: IStrapiResponse<ITeam[]> | undefined,
     getTeams: () => Promise<void>,
-    // postTeams: () => Promise<void>,
-    // deleteTeams: () => Promise<void>,
+    postTeams: () => Promise<void>,
+    deleteTeams: () => Promise<void>,
 }
 
 export const useTeamsStore = create<ITeamStore>((set) => ({
@@ -18,21 +18,21 @@ export const useTeamsStore = create<ITeamStore>((set) => ({
         } catch (error) {
             console.error(error)
         }
+    },
+    createTeam: async () => {
+        try {
+            const res = await api.postTeams()
+            set({ teams: res })
+        } catch (error) {
+            console.error(error)
+        }
+    },
+    deleteTeam: async () => {
+        try {
+            const res = await api.deleteTeam()
+            set({ teams: res })
+        } catch (error) {
+            console.error(error)
+        }
     }
-    // postTeams: async () => {
-    //     try {
-    //         const res = await api.postTeams()
-    //         // set({ teams: res })
-    //     } catch (error) {
-    //         console.error(error)
-    //     }
-    // }
-    // deleteTeams: async () => {
-    //     try {
-    //         const res = await api.deleteTeams()
-    //         // set({ teams: res })
-    //     } catch (error) {
-    //         console.error(error)
-    //     }
-    // }
 }))
