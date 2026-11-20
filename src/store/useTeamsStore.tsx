@@ -1,16 +1,17 @@
 import { create } from "zustand";
-import type { ITeam, IStrapiResponse } from "../types";
+import type { IStrapiResponse, ITeam, TTeamPayload} from "../types";
 import { api } from "../api";
 
 interface ITeamStore {
-    teams: IStrapiResponse<ITeam[]> | undefined,
+    teams?: IStrapiResponse<ITeam[]> 
     getTeams: () => Promise<void>,
-    postTeams: () => Promise<void>,
-    deleteTeams: () => Promise<void>,
+    createTeam: (input: TTeamPayload) => Promise<void>,
+    deleteTeam: (id: string) => Promise<void>,
 }
 
-export const useTeamsStore = create<ITeamStore>((set) => ({
+export const useTeamsStore = create<ITeamStore>((set, get) => ({
     teams: undefined,
+
     getTeams: async () => {
         try {
             const res = await api.getTeams()
@@ -19,18 +20,18 @@ export const useTeamsStore = create<ITeamStore>((set) => ({
             console.error(error)
         }
     },
-    createTeam: async () => {
+    createTeam: async (input) => {
         try {
-            const res = await api.postTeams()
-            set({ teams: res })
+            await api.createTeam(input)
+            await get().getTeams()
         } catch (error) {
             console.error(error)
         }
     },
-    deleteTeam: async () => {
+    deleteTeam: async (id) => {
         try {
-            const res = await api.deleteTeam()
-            set({ teams: res })
+            await api.deleteTeam(id)
+            await get().getTeams() 
         } catch (error) {
             console.error(error)
         }
